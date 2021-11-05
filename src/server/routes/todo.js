@@ -19,11 +19,16 @@ app.use('/remove/:id', passport.authenticate('jwt', { session: false }), router)
 app.set("view engine", "ejs");    
 
 app.post('/insert',async (req, res) => {
+
+console.log(req.body.owner);
+
 const todoTask = new TodoTask({
-    content: req.body.content
+    content: req.body.content,
+    owner: req.body.owner
 });
 try {
     await todoTask.save();
+
     res.redirect("/");
     } catch (err) {
     res.redirect("/");

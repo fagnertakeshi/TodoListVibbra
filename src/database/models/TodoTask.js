@@ -12,7 +12,7 @@ default: Date.now
 },
 owner: {
     type: Schema.Types.ObjectId,
-    ref:"User"
+    ref:"user"
     },
 })
 module.exports = mongoose.model('TodoTask',todoTaskSchema);
