@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
 const Schema= mongoose.Schema;
+//const Item= require('./Item')
 
-const todoTaskSchema = new mongoose.Schema({
+const ListaSchema = new mongoose.Schema({
 content: {
 type: String,
 required: true
@@ -14,5 +15,7 @@ owner: {
     type: Schema.Types.ObjectId,
     ref:"user"
     },
-})
-module.exports = mongoose.model('TodoTask',todoTaskSchema);
+},
+
+)
+module.exports = mongoose.model('Lista',ListaSchema);

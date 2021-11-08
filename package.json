@@ -10,7 +10,7 @@
   },
   "scripts": {
     "dev": "nodemon -r dotenv/config ./src/app.js",
-    "start": "node ./src/app.js"
+    "start": "nodemon -r ./src/app.js"
   },
   "dependencies": {
     "bcrypt": "^5.0.1",
