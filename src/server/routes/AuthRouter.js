@@ -25,7 +25,7 @@ module.exports = app => {
                 // com validade de 1 hora! Após este tempo, ele não poderá mais acessar
                 // as rotas protegidas!
                 const { _id } = user
-                const token = jwt.sign({ _id }, secretKey, { expiresIn: '1h' })
+                const token = jwt.sign({ _id }, secretKey, { expiresIn: '24h' })
 
                 res.cookie('jwt', token, { 
                     httpOnly: false, 

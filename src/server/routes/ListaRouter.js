@@ -11,18 +11,17 @@ module.exports = app => {
 app.use("/static", express.static("static"));
 app.use(express.urlencoded({ extended: true })); 
 
-app.use('/api/v1/lists/listar', passport.authenticate('jwt', { session: false }), router)
+app.use('/api/v1/lists/', passport.authenticate('jwt', { session: false }), router)
 app.use('/api/v1/lists/insert', passport.authenticate('jwt', { session: false }), router)
 app.use('/api/v1/lists//edit/:id', passport.authenticate('jwt', { session: false }), router)
 app.use('/api/v1/lists/remove/:id', passport.authenticate('jwt', { session: false }), router)
 
-app.set("view engine", "ejs");    
 
 app.post('/api/v1/lists/insert',async (req, res) => {
 
 // Inserir Lista
 const lista = new Lista({
-    content: req.body.content,
+    title: req.body.title,
     owner: req.body.owner
 });
 try {
@@ -34,30 +33,23 @@ try {
 });
         
 // Listar todas as listas
-app.get("/api/v1/lists/listar", (req, res) => {
+app.get("/api/v1/lists", (req, res) => {
     Lista.find({}, (err, listas) => {
         res.send({ Lista: listas });
     });
 });    
     
 // Atualizar lista pelo id
-app.route("/api/v1/lists/edit/:id")
-.get((req, res) => {
+app.put("/api/v1/lists/edit/:id", (req, res) => {
     const id = req.params.id;
-    Lista.find({}, (err, listas) => {
-    res.send({ Lista: listas, idLista: id });
-    });
-})
-.post((req, res) => {
-    const id = req.params.id;
-    Lista.findByIdAndUpdate(id, { content: req.body.content }, err => {
+    Lista.findByIdAndUpdate(id, { title: req.body.title }, err => {
     if (err) return res.send(500, err);
         res.send("Atualizado com sucesso");
     });
 });
 
 // Deletar Lista
-app.route("/api/v1/lists/remove/:id").get((req, res) => {
+app.delete("/api/v1/lists/remove/:id",(req, res) => {
     const id = req.params.id;
     console.log(id);
     Lista.findByIdAndRemove(id, err => {
