@@ -8,16 +8,10 @@ const Lista = require("../../database/models/Lista");
 
 module.exports = app => { 
 
-app.use("/static", express.static("static"));
 app.use(express.urlencoded({ extended: true })); 
 
-app.use('/api/v1/lists/', passport.authenticate('jwt', { session: false }), router)
-app.use('/api/v1/lists/insert', passport.authenticate('jwt', { session: false }), router)
-app.use('/api/v1/lists//edit/:id', passport.authenticate('jwt', { session: false }), router)
-app.use('/api/v1/lists/remove/:id', passport.authenticate('jwt', { session: false }), router)
 
-
-app.post('/api/v1/lists/insert',async (req, res) => {
+router.post('/insert',async (req, res) => {
 
 // Inserir Lista
 const lista = new Lista({
@@ -26,21 +20,21 @@ const lista = new Lista({
 });
 try {
     await lista.save();
-    res.send("Atualizado com sucesso.");
+    res.send(lista);
     } catch (err) {
     res.redirect("Erro ao atualizar.");
     }
 });
         
 // Listar todas as listas
-app.get("/api/v1/lists", (req, res) => {
+router.get("/", (req, res) => {
     Lista.find({}, (err, listas) => {
         res.send({ Lista: listas });
     });
 });    
     
 // Atualizar lista pelo id
-app.put("/api/v1/lists/edit/:id", (req, res) => {
+router.put("/edit/:id", (req, res) => {
     const id = req.params.id;
     Lista.findByIdAndUpdate(id, { title: req.body.title }, err => {
     if (err) return res.send(500, err);
@@ -49,7 +43,7 @@ app.put("/api/v1/lists/edit/:id", (req, res) => {
 });
 
 // Deletar Lista
-app.delete("/api/v1/lists/remove/:id",(req, res) => {
+router.delete("/remove/:id",(req, res) => {
     const id = req.params.id;
     console.log(id);
     Lista.findByIdAndRemove(id, err => {
@@ -57,5 +51,7 @@ app.delete("/api/v1/lists/remove/:id",(req, res) => {
         res.send("Removido com sucesso.");
     });
 });
+
+app.use('/api/v1/lists', passport.authenticate('jwt', { session: false }), router)
 
 }
