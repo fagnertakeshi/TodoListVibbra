@@ -21,9 +21,7 @@ module.exports = app => {
                     return res.status(401).json({ message })
                 }
                 
-                // Se o usuário estiver cadastrado no banco, ele irá receber um token
-                // com validade de 1 hora! Após este tempo, ele não poderá mais acessar
-                // as rotas protegidas!
+            
                 const { _id } = user
                 const token = jwt.sign({ _id }, secretKey, { expiresIn: '24h' })
 
@@ -32,62 +30,28 @@ module.exports = app => {
                     secure: false
                 })
                 .status(200)
-                .send({ msg: "Succesful Login!" })
+                .send({ msg: "Login efetuado com sucesso!" })
 
             })(req, res, next)
     })
     
-    router.get("/", (req, res) => {
-        User.find({}, (err, users) => {
-            res.send({ User: users });
-        });
-    }); 
-
+  
 
     router.post("/register", (req, res) => { 
         const { password, name, email } = req.body
 
-        // Senha é criptografada e o usuário adicionao ao banco de dados
+      
         bcrypt.hash(password, saltRounds)
             .then(async (hash) => {
                 await User.create({ name, email, password: hash }, (err, newUser) => { 
                     if (err) { 
                         console.log(err)
-                        return res.status(400).json({ error: "User already exists!" })
+                        return res.status(400).json({ error: "Erro ao criar usuário!" })
                     }
         
-                    return res.json({ message: "User created!"})
+                    return res.json({ message: "Usuário criado com sucesso!"})
                 })
             })
     })
-
-
-    router.put("/update/:id", async (req, res) => { 
-        const { password, name, email } = req.body
-        
-        const id= req.params.id
-
-        // Senha é criptografada e o usuário adicionao ao banco de dados
-        bcrypt.hash(password, saltRounds)
-            .then(async (hash) => {
-                await User.findByIdAndUpdate(id, { name, email, password: hash }, (err, newUser) => { 
-                    if (err) { 
-                        console.log(err)
-                        return res.status(400).json({ error: "Não conseguimos atualizar o usuário!" })
-                    }
-        
-                    return res.json({ message: "Usuario atualizado!"})
-                })
-            })
-    })
-
-    router.delete("/remove/:id", async (req, res) => { 
-        const id = req.params.id;
-        await User.findByIdAndRemove(id, err => {
-        if (err) return res.send(500, err);
-            res.send("Removido com sucesso.");
-        });
-
-        })
 
     app.use("/api/v1/users", router)}
